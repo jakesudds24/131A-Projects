@@ -80,14 +80,8 @@ Cg = [100;-5];
 %C = fzero(@(C)[C(1)+C(2)-theta1g;C(1)*lam11*exp(lam11*L12)+C(2)*lam12*exp(lam12*L12)],Cg);
 %C1 = fzero(@(C1,C2)[C1+C2-theta1g;C1*lam11*exp(lam11*L12)+C2*lam12*exp(lam12*L12)],Cg);
 
-
-
-
-
-%C1 = 10;
-%C2 = T1k-T_inf1g-C1;
-%the1 = fsolve(@(C) theta1(C,lam11,lam12,L12,theta1g),[C1,C2]);
-
+theta2a = T2k - T_inf1g;
+theta1a = T1k - T_inf1g;
 
 %==========================================================================
 %%
@@ -120,7 +114,7 @@ for i = 2:length(n1)-1
     A1(i,i+1) = 1+l1;
 end
 
-T_pos2 = 850;
+T_pos2 = 800;
 while abs(T_pos2 - T2k) > .5
 %Creating the C matrix, the one on the other side of A and T
 theta1g = T1k - T_inf1g;
@@ -161,11 +155,11 @@ title('Section 2 Temperature Distribution')
 %Section 2 now solved and plotted in figure 2
 %Now we solve and plot section 3
 
-L34 = 1; %Initial guess for the length of section 3
+L34 = .1; %Initial guess for the length of section 3
 n3 = linspace(0,L34,L34/dx3);
 T3 = zeros(1,length(n3));
 
-while abs(T3(length(T3)) - T4k) > 2
+while T3(length(T3)) > T4k || T3(length(T3)) == 0
 n3 = linspace(0,L34,L34/dx3);
 
 l3 = u_inf3*dx3/2/alpha1;
@@ -184,7 +178,7 @@ for i = 2:length(n3)-1
 end%of A matrix for loop
 
 %Creating the C matrix for the third section
-theta3 = T1(length(n1)) - T_inf2;
+theta3 = T2(length(n2)) - T_inf2;
 C3 = zeros(length(n3),1);
 C3(1) = theta3;
 
@@ -199,9 +193,9 @@ ylabel('Temperature (K)')
 title('Section 3 Temperature Distribution')
 
 if T3(length(T3)) > T4k
-    L34 = L34 + .1;
+    L34 = L34 - .01;
 else
-    L34 = L34 - .1;
+    L34 = L34 + .01;
 end
 end%of while statement
 
@@ -214,7 +208,7 @@ figure(4)
 plot(n,T,'r')
 xlabel('Distance (m)')
 ylabel('Temperature (K)')
-title('All Sections Temperature Distribution')
+title('All Sections Temperature Distribution (Numerical)')
 
 
 
